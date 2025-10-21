@@ -1,0 +1,356 @@
+/* Import Font Google: Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* === PENGATURAN GLOBAL & PALET WARNA BARU === */
+:root {
+    --primary-color: #007bff;      /* Biru Ceria */
+    --primary-hover: #0056b3;     /* Biru Lebih Gelap */
+    --sidebar-bg: #1e293b;         /* Biru Kehitaman (Navy) */
+    --sidebar-active: #334155;    /* Warna Link Aktif */
+    --content-bg: #f8fafc;        /* Abu-abu Sangat Terang */
+    --card-bg: #ffffff;           /* Putih */
+    --text-dark: #334155;         /* Teks Gelap */
+    --text-light: #f1f5f9;        /* Teks Terang (di sidebar) */
+    --text-muted: #64748b;        /* Teks Abu-abu */
+    --border-color: #e2e8f0;      /* Warna Border */
+    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--content-bg);
+    color: var(--text-dark);
+    line-height: 1.6;
+    font-weight: 400;
+}
+
+/* === LAYOUT UTAMA DASHBOARD === */
+.app-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* === SIDEBAR YANG DISEMPURNAKAN === */
+.sidebar {
+    width: 260px;
+    background-color: var(--sidebar-bg);
+    color: var(--text-light);
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    transition: width 0.3s ease;
+}
+
+.sidebar-header {
+    padding: 24px 20px;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-bottom: 1px solid var(--sidebar-active);
+}
+
+.sidebar-menu {
+    list-style-type: none;
+    margin-top: 20px;
+    flex-grow: 1;
+}
+
+.sidebar-menu li a {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 16px 25px;
+    color: var(--text-light);
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    border-left: 4px solid transparent;
+    font-weight: 500;
+}
+
+.sidebar-menu li a:hover {
+    background-color: var(--sidebar-active);
+}
+
+.sidebar-menu li a.active {
+    background-color: var(--primary-color);
+    border-left: 4px solid #ffffff;
+    color: #fff;
+}
+
+.sidebar-menu li a i {
+    width: 20px; /* Lebar ikon konsisten */
+    text-align: center;
+}
+
+.sidebar-menu li a.logout {
+    margin-top: auto; /* Mendorong ke bawah */
+}
+
+/* === MAIN CONTENT & HEADER === */
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background-color: var(--card-bg);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.header-left .welcome-text b {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+.header-left .welcome-text small {
+    color: var(--text-muted);
+}
+
+.header-center {
+    font-weight: 500;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.profile-pic-header {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary-color);
+}
+
+/* === AREA KONTEN UTAMA === */
+.content-area {
+    padding: 30px;
+    flex-grow: 1;
+}
+
+.content-section {
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+
+/* === DASHBOARD CARDS (DESAIN BARU) === */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+}
+
+.stat-card {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+.stat-card .icon-box {
+    font-size: 2rem;
+    padding: 20px;
+    border-radius: 50%;
+    margin-right: 20px;
+    color: #fff;
+}
+.stat-card-1 .icon-box { background: #007bff; }
+.stat-card-2 .icon-box { background: #17a2b8; }
+.stat-card-3 .icon-box { background: #28a745; }
+.stat-card-4 .icon-box { background: #ffc107; }
+
+.stat-card .info h4 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0;
+}
+.stat-card .info p {
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.action-grid {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+.action-card {
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+}
+.action-card h3 {
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+}
+.profile-card-dashboard {
+    text-align: center;
+}
+.profile-pic-large {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin-bottom: 15px;
+    border: 4px solid var(--primary-color);
+    object-fit: cover;
+    box-shadow: 0 0 15px rgba(0,123,255,0.3);
+}
+.profile-card-dashboard h3 { border: none; }
+
+
+/* === FORMULIR YANG LEBIH BAIK === */
+.form-section h4, .content-section h4 {
+    margin-bottom: 25px;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0,123,255,0.15);
+}
+
+.btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+    margin-top: 10px;
+}
+.btn:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+}
+
+
+/* === TABEL DATA YANG LEBIH RAPI === */
+.biodata-table {width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; }
+.biodata-table td {padding: 2px; vertical-align: top;}
+.biodata-table tr:nth-child(even) {background-color: #f2f2f2; }
+.biodata-table td p strong {color: #333;}
+.biodata-table tbody tr:hover {background-color: #dffdff;}
+/* .biodata-table td {
+    border: 1px solid var(--border-color);
+    text-align: left;
+} */
+
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.data-table th, .data-table td {
+    border: 1px solid var(--border-color);
+    padding: 15px;
+    text-align: left;
+}
+
+.data-table th {
+    background-color: var(--content-bg);
+    font-weight: 600;
+}
+.data-table tbody tr:nth-child(even) {
+    background-color: var(--content-bg);
+}
+.data-table tbody tr:hover {
+    background-color: #dffdff;
+}
+
+/* Notifikasi/Pesan */
+.msg { padding: 15px; margin-bottom: 20px; border-radius: 8px; color: #fff; font-weight: 500; }
+.msg.success { background-color: #28a745; }
+.msg.error { background-color: #dc3545; }
+
+/* Halaman Print */
+.print-area {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background-color: #fff;
+}
+@media print {
+    .sidebar, .header, .print-controls, .msg { display: none; }
+    .main-content { margin: 0; }
+    .content-area { padding: 0; }
+    body * { visibility: hidden; }
+    .print-area, .print-area * { visibility: visible; }
+    .print-area {
+        position: absolute; left: 0; top: 0; width: 100%;
+        border: none; box-shadow: none;
+    }
+}
+
+/* Responsif */
+@media (max-width: 768px) {
+    .app-container { flex-direction: column; }
+    .sidebar { width: 100%; height: auto; }
+    .header { flex-direction: column; gap: 10px; }
+    .dashboard-grid, .action-grid, .form-grid { grid-template-columns: 1fr; }
+}
