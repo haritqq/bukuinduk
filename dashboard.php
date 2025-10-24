@@ -81,10 +81,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // 4. Aksi untuk Tambah RIWAYAT PEKERJAAN
     if (isset($_POST['tambah_pekerjaan'])) {
+        // Bersihkan Gaji Pokok: Hapus semua titik (.) dari input yang dikirim dari JS
+        $gaji_pokok_bersih = str_replace('.', '', $_POST['gaji_pokok']); 
+        // Pastikan itu adalah integer untuk database
+        $gaji_pokok_int = (int)$gaji_pokok_bersih; 
+
         $sql = "INSERT INTO riwayat_pekerjaan (guru_id, sk_dari, sk_tanggal, sk_nomor, uraian_pangkat_jabatan, golongan_ruang, gaji_pokok, terhitung_mulai, terhitung_sampai, masa_kerja, keterangan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("isssssissss", $guru_id, $_POST['sk_dari'], $_POST['sk_tanggal'], $_POST['sk_nomor'], $_POST['uraian'], $_POST['gol_ruang'], $_POST['gaji_pokok'], $_POST['terhitung_mulai'], $_POST['terhitung_sampai'], $_POST['masa_kerja'], $_POST['keterangan']);
-         if ($stmt->execute()) {
+        $stmt->bind_param("isssssissss", 
+            $guru_id, 
+            $_POST['sk_dari'], 
+            $_POST['sk_tanggal'], 
+            $_POST['sk_nomor'], 
+            $_POST['uraian'], 
+            $_POST['gol_ruang'], 
+            $gaji_pokok_int, // <-- GUNAKAN NILAI YANG SUDAH DIBERSIHKAN
+            $_POST['terhitung_mulai'], 
+            $_POST['terhitung_sampai'], 
+            $_POST['masa_kerja'], 
+            $_POST['keterangan']
+        );
+        if ($stmt->execute()) {
             $message = "Riwayat Pekerjaan berhasil ditambahkan!"; $message_type = 'success';
         } else {
             $message = "Error: " . $stmt->error; $message_type = 'error';
@@ -338,7 +355,7 @@ function e($string) {
                 </div>
                 <?php endif; ?>
 
-                 <?php if ($page == 'pekerjaan'): ?>
+                <?php if ($page == 'pekerjaan'): ?>
                 <div class="content-section">
                     <h4>Data Riwayat Pekerjaan</h4>
                     <table class="data-table">
@@ -352,7 +369,7 @@ function e($string) {
                                 <td><?= e($row['sk_nomor']) ?></td>
                                 <td><?= e($row['uraian_pangkat_jabatan']) ?></td>
                                 <td><?= e($row['golongan_ruang']) ?></td>
-                                <td><?= e($row['gaji_pokok']) ?></td>
+                                <td>Rp. <?= number_format($row['gaji_pokok'], 0, ',', '.') ?></td>
                                 <td><?= e($row['terhitung_mulai']) ?></td>
                                 <td><?= e($row['terhitung_sampai']) ?></td>
                                 <td><?= e($row['masa_kerja']) ?></td>
@@ -363,7 +380,7 @@ function e($string) {
                     </table>
                     <hr style="margin: 20px 0;">
                     <h4>Tambah Riwayat Pekerjaan Baru</h4>
-                    <form action="dashboard.php" method="post">
+                    <form action="dashboard.php" method="post" id="formPekerjaan">
                         <input type="hidden" name="page" value="pekerjaan">
                         <div class="form-grid">
                             <div class="form-group"><label>Surat Keputusan (Dari)</label><input type="text" name="sk_dari"></div>
@@ -548,7 +565,7 @@ function e($string) {
                                     <td><?= e($row['sk_nomor']) ?></td>
                                     <td><?= e($row['uraian_pangkat_jabatan']) ?></td>
                                     <td><?= e($row['golongan_ruang']) ?></td>
-                                    <td><?= e($row['gaji_pokok']) ?></td>
+                                    <td>Rp. <?= number_format($row['gaji_pokok'], 0, ',', '.') ?></td>
                                     <td><?= e($row['terhitung_mulai']) ?></td>
                                     <td><?= e($row['terhitung_sampai']) ?></td>
                                     <td><?= e($row['masa_kerja']) ?></td>
@@ -567,55 +584,77 @@ function e($string) {
 
     
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-        const inputElement = document.getElementById('gaji_pokok_input');
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Deklarasi variabel harus di sini (di dalam DOMContentLoaded)
+    const inputElement = document.getElementById('gaji_pokok_input');
+    // UBAH: Gunakan ID form yang baru
+    const formElement = document.getElementById('formPekerjaan'); 
 
-        // Fungsi untuk memformat angka dengan pemisah ribuan (titik)
-        function formatRupiah(angka) {
-            // Hapus semua karakter non-angka (kecuali koma/titik desimal jika diperlukan,
-            // tapi untuk gaji pokok, kita anggap bilangan bulat)
-            let bilangan = String(angka).replace(/[^0-9]/g, ''); 
-            
-            if (bilangan === '') return '';
+    // --- 1. FUNGSI FORMATTING REAL-TIME (Tidak ada perubahan, sudah benar) ---
 
-            // Ubah menjadi format angka dengan pemisah ribuan titik
-            let number_string = bilangan.toString(),
-                sisa    = number_string.length % 3,
-                rupiah  = number_string.substr(0, sisa),
-                ribuan  = number_string.substr(sisa).match(/\d{3}/g);
-            
-            if (ribuan) {
-                separator = sisa ? '.' : '';
-                rupiah += separator + ribuan.join('.');
-            }
-            return rupiah;
+    // Fungsi untuk memformat angka dengan pemisah ribuan (titik)
+    function formatRupiah(angka) {
+        // Hapus semua karakter non-angka
+        let bilangan = String(angka).replace(/[^0-9]/g, ''); 
+        
+        if (bilangan === '') return '';
+
+        let number_string = bilangan.toString(),
+            sisa    = number_string.length % 3,
+            rupiah  = number_string.substr(0, sisa),
+            ribuan  = number_string.substr(sisa).match(/\d{3}/g);
+        
+        if (ribuan) {
+            separator = sisa ? '.' : '';
+            rupiah += separator + ribuan.join('.');
         }
+        return rupiah;
+    }
 
-        // Event listener yang dipicu saat ada input (ketika mengetik)
+    // Event listener yang dipicu saat ada input (ketika mengetik)
+    if (inputElement) {
         inputElement.addEventListener('input', function(e) {
             this.value = formatRupiah(this.value);
         });
-        
-        // Optional: Jika Anda ingin nilai yang dikirim ke server adalah angka murni,
-        // Anda perlu membuat hidden input atau membersihkan nilai sebelum dikirim.
-        // Contoh saat formulir disubmit:
-        // document.querySelector('form').addEventListener('submit', function(e) {
-        //     let nilaiMurni = inputElement.value.replace(/[^0-9]/g, '');
-        //     // Simpan nilaiMurni ke hidden input atau ubah nilai inputElement.value
-        // });
-    });
+    }
+    
+    // --- 2. FUNGSI PEMBERSIHAN SAAT SUBMIT (Menggunakan ID yang sudah diperbaiki) ---
 
+    if (formElement && inputElement) {
+        formElement.addEventListener('submit', function(e) {
+            // 1. Ambil nilai input yang berformat (misal: "10.000.000")
+            let formattedValue = inputElement.value;
+
+            // 2. Hapus semua titik (.) untuk mendapatkan nilai murni
+            let rawValue = formattedValue.replace(/\./g, ''); 
+
+            // 3. Set kembali nilai input dengan nilai murni sebelum formulir dikirim
+            inputElement.value = rawValue; 
+            
+            // Catatan: Biarkan form tetap ter-submit (jangan ada preventDefault)
+        });
+    } else {
+        // UBAH pesan peringatan
+        console.warn('Pastikan ID "gaji_pokok_input" dan "formPekerjaan" sudah ada di HTML.');
+    }
+
+
+        // --- 3. FUNGSI CLOCK ---
         function updateClock() {
             const now = new Date();
             const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
             const day = days[now.getDay()];
             const date = now.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
             const time = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            document.getElementById('clock').innerHTML = `${day}, ${date} | ${time}`;
+            const clockElement = document.getElementById('clock');
+            if (clockElement) {
+                clockElement.innerHTML = `${day}, ${date} | ${time}`;
+            }
         }
         setInterval(updateClock, 1000);
         updateClock();
-    </script>
+    });
+</script>
 </body>
 </html>
