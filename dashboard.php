@@ -371,7 +371,11 @@ function e($string) {
                             <div class="form-group"><label>SK Nomor</label><input type="text" name="sk_nomor"></div>
                             <div class="form-group"><label>Golongan Ruang</label><input type="text" name="gol_ruang"></div>
                             <div class="form-group full-width"><label>Uraian Perubahan Pangkat & Jabatan</label><textarea name="uraian" rows="2"></textarea></div>
-                            <div class="form-group"><label>Gaji Pokok</label><input type="number" name="gaji_pokok"></div>
+                            <!-- <div class="form-group"><label>Gaji Pokok</label><input type="number" name="gaji_pokok"></div> -->
+                            <div class="form-group">
+                                <label>Gaji Pokok</label>
+                                <input type="text" name="gaji_pokok" id="gaji_pokok_input">
+                            </div>
                             <div class="form-group"><label>Terhitung Mulai</label><input type="text" name="terhitung_mulai"></div>
                             <div class="form-group"><label>Terhitung Sampai</label><input type="text" name="terhitung_sampai"></div>
                             <div class="form-group"><label>Masa Kerja</label><input type="text" name="masa_kerja"></div>
@@ -561,7 +565,47 @@ function e($string) {
         </main>
     </div>
 
+    
+
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        const inputElement = document.getElementById('gaji_pokok_input');
+
+        // Fungsi untuk memformat angka dengan pemisah ribuan (titik)
+        function formatRupiah(angka) {
+            // Hapus semua karakter non-angka (kecuali koma/titik desimal jika diperlukan,
+            // tapi untuk gaji pokok, kita anggap bilangan bulat)
+            let bilangan = String(angka).replace(/[^0-9]/g, ''); 
+            
+            if (bilangan === '') return '';
+
+            // Ubah menjadi format angka dengan pemisah ribuan titik
+            let number_string = bilangan.toString(),
+                sisa    = number_string.length % 3,
+                rupiah  = number_string.substr(0, sisa),
+                ribuan  = number_string.substr(sisa).match(/\d{3}/g);
+            
+            if (ribuan) {
+                separator = sisa ? '.' : '';
+                rupiah += separator + ribuan.join('.');
+            }
+            return rupiah;
+        }
+
+        // Event listener yang dipicu saat ada input (ketika mengetik)
+        inputElement.addEventListener('input', function(e) {
+            this.value = formatRupiah(this.value);
+        });
+        
+        // Optional: Jika Anda ingin nilai yang dikirim ke server adalah angka murni,
+        // Anda perlu membuat hidden input atau membersihkan nilai sebelum dikirim.
+        // Contoh saat formulir disubmit:
+        // document.querySelector('form').addEventListener('submit', function(e) {
+        //     let nilaiMurni = inputElement.value.replace(/[^0-9]/g, '');
+        //     // Simpan nilaiMurni ke hidden input atau ubah nilai inputElement.value
+        // });
+    });
+
         function updateClock() {
             const now = new Date();
             const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];

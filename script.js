@@ -63,6 +63,35 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 
+    // gak tahu gak jalan di sini, jadi di taruh di dasboard di bawah
+    // const inputElement = document.getElementById('gaji_pokok_input');
+
+    //     // Fungsi untuk memformat angka dengan pemisah ribuan (titik)
+    //     function formatRupiah(angka) {
+    //         // Hapus semua karakter non-angka (kecuali koma/titik desimal jika diperlukan,
+    //         // tapi untuk gaji pokok, kita anggap bilangan bulat)
+    //         let bilangan = String(angka).replace(/[^0-9]/g, ''); 
+            
+    //         if (bilangan === '') return '';
+
+    //         // Ubah menjadi format angka dengan pemisah ribuan titik
+    //         let number_string = bilangan.toString(),
+    //             sisa    = number_string.length % 3,
+    //             rupiah  = number_string.substr(0, sisa),
+    //             ribuan  = number_string.substr(sisa).match(/\d{3}/g);
+            
+    //         if (ribuan) {
+    //             separator = sisa ? '.' : '';
+    //             rupiah += separator + ribuan.join('.');
+    //         }
+    //         return rupiah;
+    //     }
+
+    //     // Event listener yang dipicu saat ada input (ketika mengetik)
+    //     inputElement.addEventListener('input', function(e) {
+    //         this.value = formatRupiah(this.value);
+    //     });
+
     
 
 });
